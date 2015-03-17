@@ -11,6 +11,7 @@
 #import "JTSSimpleImageDownloader.h"
 #import "UIImage+JTSImageEffects.h"
 #import "UIApplication+JTSImageViewController.h"
+#import <UIImage-Resize/UIImage+Resize.h>
 
 ///--------------------------------------------------------------------------------------------------------------------
 /// Definitions
@@ -388,36 +389,40 @@ typedef struct {
         BOOL fromDisk = [imageInfo.imageURL.absoluteString hasPrefix:@"file://"];
         _flags.imageIsBeingReadFromDisk = fromDisk;
         
-        typeof(self) __weak weakSelf = self;
-        NSURLSessionDataTask *task = [JTSSimpleImageDownloader downloadImageForURL:imageInfo.imageURL canonicalURL:imageInfo.canonicalImageURL completion:^(UIImage *image) {
-            typeof(self) strongSelf = weakSelf;
-            [strongSelf cancelProgressTimer];
-            if (image) {
-                if (strongSelf.isViewLoaded) {
-                    [strongSelf updateInterfaceWithImage:image];
-                } else {
-                    strongSelf.image = image;
-                }
-            } else if (strongSelf.image == nil) {
-                _flags.imageDownloadFailed = YES;
-                if (_flags.isPresented && _flags.isAnimatingAPresentationOrDismissal == NO) {
-                    [strongSelf dismiss:YES];
-                }
-                // If we're still presenting, at the end of presentation we'll auto dismiss.
-            }
-        }];
-        
-        self.imageDownloadDataTask = task;
-        
-        [self startProgressTimer];
+		typeof(self) __weak weakSelf = self;
+		NSURLSessionDataTask *task = [JTSSimpleImageDownloader downloadImageForURL:imageInfo.imageURL canonicalURL:imageInfo.canonicalImageURL completion:^(UIImage *image) {
+			typeof(self) strongSelf = weakSelf;
+			[strongSelf cancelProgressTimer];
+			if (image) {
+				if (strongSelf.downloadDelegate && [strongSelf.downloadDelegate respondsToSelector:@selector(imageSizeForImage:imageViewer:)]) {
+					image = [image resizedImageToSize:[strongSelf.downloadDelegate imageSizeForImage:image imageViewer:strongSelf]];
+				}
+				
+				if (strongSelf.isViewLoaded) {
+					[strongSelf updateInterfaceWithImage:image];
+				} else {
+					strongSelf.image = image;
+				}
+			} else if (strongSelf.image == nil) {
+				_flags.imageDownloadFailed = YES;
+				if (_flags.isPresented && _flags.isAnimatingAPresentationOrDismissal == NO) {
+					[strongSelf dismiss:YES];
+				}
+				// If we're still presenting, at the end of presentation we'll auto dismiss.
+			}
+		}];
+		
+		self.imageDownloadDataTask = task;
+		
+		[self startProgressTimer];
     }
 }
 
 - (void)viewDidLoadForImageMode {
-    
+	
     self.view.backgroundColor = [UIColor blackColor];
     self.view.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
-    
+	
     self.blackBackdrop = [[UIView alloc] initWithFrame:CGRectInset(self.view.bounds, -512, -512)];
     self.blackBackdrop.backgroundColor = [UIColor blackColor];
     self.blackBackdrop.alpha = 0;

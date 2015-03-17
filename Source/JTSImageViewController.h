@@ -19,6 +19,7 @@
 @protocol JTSImageViewControllerInteractionsDelegate;
 @protocol JTSImageViewControllerAccessibilityDelegate;
 @protocol JTSImageViewControllerAnimationDelegate;
+@protocol JTSImageViewControllerDownloadDelegate;
 
 typedef NS_ENUM(NSInteger, JTSImageViewControllerMode) {
     JTSImageViewControllerMode_Image,
@@ -62,6 +63,8 @@ extern CGFloat const JTSImageViewController_DefaultBackgroundBlurRadius;
 @property (weak, nonatomic, readwrite) id <JTSImageViewControllerAccessibilityDelegate> accessibilityDelegate;
 
 @property (weak, nonatomic, readwrite) id <JTSImageViewControllerAnimationDelegate> animationDelegate;
+
+@property (weak, nonatomic, readwrite) id <JTSImageViewControllerDownloadDelegate> downloadDelegate;
 
 /**
  Designated initializer.
@@ -229,6 +232,13 @@ extern CGFloat const JTSImageViewController_DefaultBackgroundBlurRadius;
 
 @end
 
+
+@protocol JTSImageViewControllerDownloadDelegate <NSObject>
+
+@optional
+- (CGSize)imageSizeForImage:(UIImage *)anImage imageViewer:(JTSImageViewController *)imageViewer;
+
+@end
 
 
 
