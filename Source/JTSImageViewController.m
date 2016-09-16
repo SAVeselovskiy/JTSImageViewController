@@ -11,7 +11,7 @@
 #import "JTSSimpleImageDownloader.h"
 #import "UIImage+JTSImageEffects.h"
 #import "UIApplication+JTSImageViewController.h"
-@import UIImage-Resize;
+@import UIImage_Resize;
 
 ///--------------------------------------------------------------------------------------------------------------------
 /// Definitions
