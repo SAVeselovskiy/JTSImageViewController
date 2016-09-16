@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "JTSImageViewController@bulusoy"
-  s.version      = "1.5.3"
+  s.version      = "1.5.4"
   s.summary      = "Fork of JTSImageViewController. An interactive iOS image viewer that does it all: double tap to zoom, flick to dismiss, et cetera."
   s.homepage     = "https://github.com/bulusoy/JTSImageViewController"
   s.license      = { :type => 'MIT', :file => 'LICENSE'  }
